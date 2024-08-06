@@ -71,24 +71,23 @@ if (CollegeId) {
     data.PermanentAddress.split('$')[4]
 
   const container = document.getElementById('coursesContainer')
-
+  let firstItr = true
   for (const c in data.Courses) {
-    const newCourseRow = document.createElement('div')
-    newCourseRow.classList.add('row')
-
-    newCourseRow.innerHTML = `
+    if (firstItr) {
+      firstItr = false
+      container.innerHTML = `
+        <div class="row" id="course">
             <div class="col-md-6">
               <label for="courses">Courses</label>
               <div class="input-group">
-                <select class="form-control" id="courses" name="coursesType" required>
+                <select class="form-control" id="courses" name="coursesType" value=${c} required>
                   <option>btech</option>
                   <option>m tech</option>
                   <option>bca</option>
                   <option>mca</option>
-                  <option selected>${c}</option>
                 </select>
                 <div class="input-group-append">
-                  <button class="btn remove-course-btn btn-danger text-bold text-light">-</button>
+                  <button class="btn btn-xs add-course-btn text-bold text-light">+</button>
                 </div>
               </div>
             </div>
@@ -96,11 +95,40 @@ if (CollegeId) {
 
             <div class="col-md-6">
               <label for="branch">Branch</label>
-              <input name="branchType" value="${data.Courses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
+              <input name="branchType" type="text" value=${data.Courses[c]} class="form-control" id="branch" placeholder="Enter your branch"
                 required />
-            </div> 
-            `
-    container.appendChild(newCourseRow)
+            </div>
+          </div>
+      `
+    } else {
+      const newCourseRow = document.createElement('div')
+      newCourseRow.classList.add('row')
+
+      newCourseRow.innerHTML = `
+              <div class="col-md-6">
+                <label for="courses">Courses</label>
+                <div class="input-group">
+                  <select class="form-control" id="courses" name="coursesType" value=${c} required>
+                    <option>btech</option>
+                    <option>m tech</option>
+                    <option>bca</option>
+                    <option>mca</option>
+                  </select>
+                  <div class="input-group-append">
+                    <button class="btn remove-course-btn btn-danger text-bold text-light">-</button>
+                  </div>
+                </div>
+              </div>
+  
+  
+              <div class="col-md-6">
+                <label for="branch">Branch</label>
+                <input name="branchType" value="${data.Courses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
+                  required />
+              </div> 
+              `
+      container.appendChild(newCourseRow)
+    }
   }
 }
 
