@@ -1,6 +1,6 @@
 // import { PORT, URL } from "../constants";
 export const PORT = 7060
-export const URL = 'http://localhost'
+export const URL = 'https://localhost'
 const mock = [
   {
     CurrentAddress: 'Harda$$Harda$Madhya Pradesh$461331',

@@ -241,6 +241,33 @@
     </div>
   </footer>
 
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h2>Registration Successful</h2>
+      </div>
+      <div class="modal-body">
+        <p>Thank you for registering. Your registration ID is <strong id="registrationId"></strong>.</p>
+        <button class="ok-button" id="okButton">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Failure Modal -->
+  <div id="failureModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header-failed">
+        <span class="close-failed">&times;</span>
+        <h2>Registration Failed</h2>
+      </div>
+      <div class="modal-body">
+        <p>Sorry, there was an error with your registration. Please try again.</p>
+        <button class="ok-button-failed" id="okButtonFailed">OK</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="../JS/register.js"></script>
   <!-- Bootstrap JS and dependencies -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

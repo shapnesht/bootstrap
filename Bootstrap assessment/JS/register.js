@@ -1,6 +1,6 @@
 //import { PORT, URL } from "../constants";
 export const PORT = 7060
-export const API_URL = 'http://localhost'
+export const API_URL = 'https://localhost'
 const coursesContainer = document.getElementById('coursesContainer')
 const addCourseBtn = document.querySelector('.add-course-btn')
 
@@ -12,11 +12,11 @@ function getQueryParameter() {
 }
 
 const fetchDetailsFromId = async (id) => {
-  const response = fetch(`${API_URL}:${PORT}/api/College/${id}`)
-  if (response.ok) {
+  try {
+    const response = await fetch(`${API_URL}:${PORT}/api/College/${id}`)
     const data = await response.json()
     return data
-  } else {
+  } catch (error) {
     return {
       CurrentAddress: 'Harda$$Harda$Madhya Pradesh$461331',
       PermanentAddress: 'Harda$$Harda$Madhya Pradesh$461331',
@@ -192,11 +192,9 @@ const handleSubmit = async (event) => {
 
   if (response.ok) {
     const result = response.json()
-    alert(
-      `College details added successfully and registration id : ${result.RegistrationId}`
-    )
+    openSuccessModal(result.RegistrationId)
   } else {
-    alert('Failed to add college details')
+    openFailedModal()
   }
 }
 
@@ -290,3 +288,48 @@ document.querySelector('form').addEventListener('submit', handleSubmit)
 document
   .getElementById('addressCheck')
   .addEventListener('change', handleCheckbox)
+
+const successModal = document.getElementById('successModal')
+const failureModal = document.getElementById('failureModal')
+const closeSuccess = document.getElementsByClassName('close')[0]
+const closeFailed = document.getElementsByClassName('close-failed')[0]
+const okButton = document.getElementById('okButton')
+const okButtonFailed = document.getElementById('okButtonFailed')
+const registrationId = document.getElementById('registrationId')
+
+const openSuccessModal = (id) => {
+  successModal.style.display = 'block'
+}
+const openFailedModal = (id) => {
+  failureModal.style.display = 'block'
+}
+
+// Function to close the success modal
+closeSuccess.onclick = function () {
+  successModal.style.display = 'none'
+}
+
+// Function to close the failure modal
+closeFailed.onclick = function () {
+  failureModal.style.display = 'none'
+}
+
+// Function to close the modal if the user clicks outside of it
+window.onclick = function (event) {
+  if (event.target == successModal) {
+    successModal.style.display = 'none'
+  }
+  if (event.target == failureModal) {
+    failureModal.style.display = 'none'
+  }
+}
+
+// Function to redirect to index.html when OK button is clicked
+okButton.onclick = function () {
+  window.location.href = 'index.html'
+}
+
+// Function to redirect to index.html when OK button is clicked in failure modal
+okButtonFailed.onclick = function () {
+  window.location.href = 'index.html'
+}
