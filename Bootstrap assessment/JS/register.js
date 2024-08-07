@@ -12,7 +12,7 @@ const okButtonFailed = document.getElementById('okButtonFailed')
 const registrationId = document.getElementById('registrationId')
 
 const openSuccessModal = (id) => {
-  registrationId.textContent = id
+  registrationId.textContent = registrationId
   successModal.style.display = 'block'
 }
 const openFailedModal = (id) => {
@@ -102,7 +102,7 @@ if (collegeId) {
 
   const container = document.getElementById('coursesContainer')
   let firstItr = true
-  const allCourses = JSON.parse(data.courses)
+  const allCourses = data.courses
   for (const c in allCourses) {
     if (firstItr) {
       firstItr = false

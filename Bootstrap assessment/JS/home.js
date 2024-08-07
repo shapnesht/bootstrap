@@ -70,6 +70,7 @@ const tableBody = document.querySelector('tbody')
 const handleDelete = (collegeId) => {
   openDeleteModal()
   confirmBtn.onclick = async function () {
+    modal.style.display = 'none'
     try {
       const response = await fetch(
         `${API_URL}:${PORT}/api/College/${collegeId}`,
@@ -82,11 +83,11 @@ const handleDelete = (collegeId) => {
       } else {
         alert('Failed to delete college record')
       }
-      window.location.href = 'index.html'
     } catch (error) {
       console.error('Error:', error)
       alert('An error occurred while deleting the record')
     }
+    window.location.href = 'index.html'
   }
 }
 const renderTable = (data) => {
