@@ -3,6 +3,51 @@ export const PORT = 7060
 export const API_URL = 'https://localhost'
 const coursesContainer = document.getElementById('coursesContainer')
 const addCourseBtn = document.querySelector('.add-course-btn')
+const successModal = document.getElementById('successModal')
+const failureModal = document.getElementById('failureModal')
+const closeSuccess = document.getElementsByClassName('close')[0]
+const closeFailed = document.getElementsByClassName('close-failed')[0]
+const okButton = document.getElementById('okButton')
+const okButtonFailed = document.getElementById('okButtonFailed')
+const registrationId = document.getElementById('registrationId')
+
+const openSuccessModal = (id) => {
+  successModal.style.display = 'block'
+  registrationId.value = id
+}
+const openFailedModal = (id) => {
+  failureModal.style.display = 'block'
+}
+
+// Function to close the success modal
+closeSuccess.onclick = function () {
+  successModal.style.display = 'none'
+}
+
+// Function to close the failure modal
+closeFailed.onclick = function () {
+  failureModal.style.display = 'none'
+}
+
+// Function to close the modal if the user clicks outside of it
+window.onclick = function (event) {
+  if (event.target == successModal) {
+    successModal.style.display = 'none'
+  }
+  if (event.target == failureModal) {
+    failureModal.style.display = 'none'
+  }
+}
+
+// Function to redirect to index.html when OK button is clicked
+okButton.onclick = function () {
+  window.location.href = 'index.html'
+}
+
+// Function to redirect to index.html when OK button is clicked in failure modal
+okButtonFailed.onclick = function () {
+  window.location.href = 'index.html'
+}
 
 function getQueryParameter() {
   var url = window.location.href
@@ -17,48 +62,33 @@ const fetchDetailsFromId = async (id) => {
     const data = await response.json()
     return data
   } catch (error) {
-    return {
-      CurrentAddress: 'Harda$$Harda$Madhya Pradesh$461331',
-      PermanentAddress: 'Harda$$Harda$Madhya Pradesh$461331',
-      CollegeId: 'IGEC',
-      CollegeName: 'indira gandhi',
-      Courses: {
-        btech: 'CS, IT, MECH',
-        'm tech': 'CS, IT, MECH',
-      },
-      RegistrationDate: '2024-08-04T18:15:55.256Z',
-      EmailId: 'Parasharashi02@gmail.com',
-      ContactNumber: '961 795 3882',
-      DocumentNumber: '5546',
-      DocumentType: 'Identity Card',
-      Nationality: 'Indian',
-      RegistrationId: 'inIG2024',
-    }
+    openFailedModal()
   }
 }
 
-const CollegeId = getQueryParameter()
-if (CollegeId) {
-  // fetch details and show them
-  const data = await fetchDetailsFromId(CollegeId)
+const collegeId = getQueryParameter()
 
-  document.getElementById('collegeId').value = data.CollegeId
-  document.getElementById('name').value = data.CollegeName
-  document.getElementById('email').value = data.EmailId
-  document.getElementById('contact').value = data.ContactNumber
-  document.getElementById('nationality').value = data.Nationality
-  document.getElementById('documentType').value = data.DocumentType
-  document.getElementById('documentNumber').value = data.DocumentNumber
+if (collegeId) {
+  // fetch details and show them
+  const data = await fetchDetailsFromId(collegeId)
+
+  document.getElementById('collegeId').value = data.collegeId
+  document.getElementById('name').value = data.collegeName
+  document.getElementById('email').value = data.emailId
+  document.getElementById('contact').value = data.contactNumber
+  document.getElementById('nationality').value = data.nationality
+  document.getElementById('documentType').value = data.documentType
+  document.getElementById('documentNumber').value = data.documentNumber
   document.getElementById('currentstreetaddress').value =
-    data.CurrentAddress.split('$')[0]
+    data.currentAddress.split('$')[0]
   document.getElementById('currentstreetaddressline2').value =
-    data.CurrentAddress.split('$')[1]
+    data.currentAddress.split('$')[1]
   document.getElementById('currentcity').value =
-    data.CurrentAddress.split('$')[2]
+    data.currentAddress.split('$')[2]
   document.getElementById('currentstate').value =
-    data.CurrentAddress.split('$')[3]
+    data.currentAddress.split('$')[3]
   document.getElementById('currentpostal').value =
-    data.CurrentAddress.split('$')[4]
+    data.currentAddress.split('$')[4]
   document.getElementById('permanentstreetaddress').value =
     data.PermanentAddress.split('$')[0]
   document.getElementById('permanentstreetaddressline2').value =
@@ -72,7 +102,7 @@ if (CollegeId) {
 
   const container = document.getElementById('coursesContainer')
   let firstItr = true
-  for (const c in data.Courses) {
+  for (const c in data.courses) {
     if (firstItr) {
       firstItr = false
       container.innerHTML = `
@@ -95,7 +125,7 @@ if (CollegeId) {
 
             <div class="col-md-6">
               <label for="branch">Branch</label>
-              <input name="branchType" type="text" value=${data.Courses[c]} class="form-control" id="branch" placeholder="Enter your branch"
+              <input name="branchType" type="text" value=${data.courses[c]} class="form-control" id="branch" placeholder="Enter your branch"
                 required />
             </div>
           </div>
@@ -123,7 +153,7 @@ if (CollegeId) {
   
               <div class="col-md-6">
                 <label for="branch">Branch</label>
-                <input name="branchType" value="${data.Courses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
+                <input name="branchType" value="${data.courses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
                   required />
               </div> 
               `
@@ -173,27 +203,39 @@ addCourseBtn.addEventListener('click', function () {
 const handleSubmit = async (event) => {
   event.preventDefault()
   const data = new FormData(event.target)
-  const collegeDetails = getCollegeDetails(data)
+  const collegeDetails = JSON.stringify(getCollegeDetails(data))
+
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+  })
 
   const request = new Request(`${API_URL}:${PORT}/api/College`, {
     method: 'POST',
+    headers: headers,
     body: collegeDetails,
   })
-  const updateRequest = new Request(`${URL}:${PORT}/api/College${CollegeId}`, {
-    method: 'PUT',
-    body: collegeDetails,
-  })
-  let response
-  if (CollegeId) {
-    response = await fetch(updateRequest)
-  } else {
-    response = await fetch(request)
-  }
-
-  if (response.ok) {
-    const result = response.json()
-    openSuccessModal(result.RegistrationId)
-  } else {
+  const updateRequest = new Request(
+    `${API_URL}:${PORT}/api/College/${collegeId}`,
+    {
+      method: 'PUT',
+      headers: headers,
+      body: collegeDetails,
+    }
+  )
+  try {
+    let response
+    if (collegeId) {
+      response = await fetch(updateRequest)
+    } else {
+      response = await fetch(request)
+    }
+    const result = await response.json()
+    alert(
+      `College details added successfully and registration id : ${result.registrationId}`
+    )
+    openSuccessModal(response.registrationId)
+  } catch (error) {
+    alert('Failed to add college details')
     openFailedModal()
   }
 }
@@ -226,7 +268,7 @@ const getCollegeDetails = (data) => {
   const PermanentAddress = getPermanentAddress(data)
   const CollegeId = data.get('collegeId')
   const CollegeName = data.get('collegename')
-  const Courses = getCoursesDetails()
+  const Courses = JSON.stringify(getCoursesDetails())
   const RegistrationDate = new Date()
   const EmailId = data.get('email')
   const ContactNumber = data.get('contact')
@@ -288,48 +330,3 @@ document.querySelector('form').addEventListener('submit', handleSubmit)
 document
   .getElementById('addressCheck')
   .addEventListener('change', handleCheckbox)
-
-const successModal = document.getElementById('successModal')
-const failureModal = document.getElementById('failureModal')
-const closeSuccess = document.getElementsByClassName('close')[0]
-const closeFailed = document.getElementsByClassName('close-failed')[0]
-const okButton = document.getElementById('okButton')
-const okButtonFailed = document.getElementById('okButtonFailed')
-const registrationId = document.getElementById('registrationId')
-
-const openSuccessModal = (id) => {
-  successModal.style.display = 'block'
-}
-const openFailedModal = (id) => {
-  failureModal.style.display = 'block'
-}
-
-// Function to close the success modal
-closeSuccess.onclick = function () {
-  successModal.style.display = 'none'
-}
-
-// Function to close the failure modal
-closeFailed.onclick = function () {
-  failureModal.style.display = 'none'
-}
-
-// Function to close the modal if the user clicks outside of it
-window.onclick = function (event) {
-  if (event.target == successModal) {
-    successModal.style.display = 'none'
-  }
-  if (event.target == failureModal) {
-    failureModal.style.display = 'none'
-  }
-}
-
-// Function to redirect to index.html when OK button is clicked
-okButton.onclick = function () {
-  window.location.href = 'index.html'
-}
-
-// Function to redirect to index.html when OK button is clicked in failure modal
-okButtonFailed.onclick = function () {
-  window.location.href = 'index.html'
-}
