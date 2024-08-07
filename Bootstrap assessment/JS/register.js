@@ -12,8 +12,8 @@ const okButtonFailed = document.getElementById('okButtonFailed')
 const registrationId = document.getElementById('registrationId')
 
 const openSuccessModal = (id) => {
+  registrationId.textContent = id
   successModal.style.display = 'block'
-  registrationId.value = id
 }
 const openFailedModal = (id) => {
   failureModal.style.display = 'block'
@@ -102,7 +102,8 @@ if (collegeId) {
 
   const container = document.getElementById('coursesContainer')
   let firstItr = true
-  for (const c in data.courses) {
+  const allCourses = JSON.parse(data.courses)
+  for (const c in allCourses) {
     if (firstItr) {
       firstItr = false
       container.innerHTML = `
@@ -125,7 +126,7 @@ if (collegeId) {
 
             <div class="col-md-6">
               <label for="branch">Branch</label>
-              <input name="branchType" type="text" value=${data.courses[c]} class="form-control" id="branch" placeholder="Enter your branch"
+              <input name="branchType" type="text" value=${allCourses[c]} class="form-control" id="branch" placeholder="Enter your branch"
                 required />
             </div>
           </div>
@@ -153,7 +154,7 @@ if (collegeId) {
   
               <div class="col-md-6">
                 <label for="branch">Branch</label>
-                <input name="branchType" value="${data.courses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
+                <input name="branchType" value="${allCourses[c]}" type="text" class="form-control" id="branch" placeholder="Enter your branch"
                   required />
               </div> 
               `
